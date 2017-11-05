@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2017-10-19T11:39:21.280Z</updated>
+  <updated>2017-11-05T09:00:02.654Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,33 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>php_screw解密</title>
+    <link href="http://yoursite.com/2017/11/05/php-screw%E8%A7%A3%E5%AF%86/"/>
+    <id>http://yoursite.com/2017/11/05/php-screw解密/</id>
+    <published>2017-11-05T08:38:46.000Z</published>
+    <updated>2017-11-05T09:00:02.654Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="0x00"><a href="#0x00" class="headerlink" title="0x00"></a>0x00</h1><p>最近练习ctf遇到一道php_screw加密的题目，百度一圈在线解的话需要收费（每次遇到收费解密的题，很烦有木有）。最后在github上找到一个解密的脚本，这里结合这道题说一下使用方法。</p><p><a href="https://github.com/amor-tsai/php_screw" target="_blank" rel="external">项目链接</a></p><h1 id="0x01"><a href="#0x01" class="headerlink" title="0x01"></a>0x01</h1><p>项目要求要求php环境，版本5.x，并要求zlib支持，我的php是5.6。打开文件夹，在tools目录下运行make指令会生成两个可执行文件。screw用来加密，screwd用来解密。在文件夹中有两个文件，一个是my_screw.h，另一个是php_screw.h。</p><h2 id="php-screw-h"><a href="#php-screw-h" class="headerlink" title="php_screw.h"></a>php_screw.h</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">#define PM9SCREW             &quot;\tPM9SCREW\t&quot;</div><div class="line">#define PM9SCREW_LEN         10</div></pre></td></tr></table></figure><p>如果不改这个文件，你加密的文件内容开头就会有 PM9SCREW ，你复制到google搜索下就知道是用screw模块加密的，所以可以对其进行修改隐藏加密算法。</p><h2 id="my-screw-h"><a href="#my-screw-h" class="headerlink" title="my_screw.h"></a>my_screw.h</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">short pm9screw_mycryptkey[] = &#123;</div><div class="line"> 11152, 368, 192, 1281, 62</div><div class="line">&#125;;</div></pre></td></tr></table></figure><p>加密密钥，修改文件里面的数组文件，可以用数字添 加该数组的长度。数组越长，加密越可靠。而且该数组的长度不会影响加密以及你的PHP程序执行的速度，但是最好不要超过五位。</p><h1 id="0x02"><a href="#0x02" class="headerlink" title="0x02"></a>0x02</h1><p>index.php.bak源码下载，并且在index.php的源码里面发现了<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">&lt;!--The #define is xxooaa and LEN is 6--&gt;</div><div class="line">&lt;!--The crypt key is &#123;11132, 468, 392, 1281, 62&#125;--&gt;</div></pre></td></tr></table></figure></p><p>按照上面写的，修改my_screw.h和php_screw.h两个文件。</p><p>然后在tools目录下再进行解密<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./screwd index.php</div></pre></td></tr></table></figure></p><p>解密后的文件名在原先文件后加.src后缀</p><p>同样你也可以进行你想要的加密</p><h1 id="0x03"><a href="#0x03" class="headerlink" title="0x03"></a>0x03</h1><p>最后说一下phpjiami，这里只能Orz大佬</p><p><a href="https://www.leavesongs.com/PENETRATION/unobfuscated-phpjiami.html" target="_blank" rel="external">链接</a></p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h1 id=&quot;0x00&quot;&gt;&lt;a href=&quot;#0x00&quot; class=&quot;headerlink&quot; title=&quot;0x00&quot;&gt;&lt;/a&gt;0x00&lt;/h1&gt;&lt;p&gt;最近练习ctf遇到一道php_screw加密的题目，百度一圈在线解的话需要收费（每次遇到收费解密的题，很烦有木有）。最后在g
+      
+    
+    </summary>
+    
+      <category term="web" scheme="http://yoursite.com/categories/web/"/>
+    
+    
+      <category term="php_screw" scheme="http://yoursite.com/tags/php-screw/"/>
+    
+      <category term="phpjiami" scheme="http://yoursite.com/tags/phpjiami/"/>
+    
+  </entry>
   
   <entry>
     <title>Hello World</title>

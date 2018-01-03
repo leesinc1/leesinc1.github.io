@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.icon.jpg?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.icon.jpg?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.icon.jpg?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="密码学课程设计,AES_CBC," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="leesinc1's blog" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="说明基于CBC模式的一组明文的加密，对于文件加密的操作遇到点问题，加密之后的密文转成字符串以文本的形式输入文件会出现中文乱码，然后解密的时候只会解密出其中一部分，弄半天没有什么好的方法解决，原地爆炸（毕竟太菜），或许以后有时间会再来写吧。。。嘿嘿嘿 代码字符串异或123456789def str_xor(str1,str2):    ans = &amp;quot;&amp;quot;    for i in r">
+<meta name="keywords" content="密码学课程设计,AES_CBC">
+<meta property="og:type" content="article">
+<meta property="og:title" content="密码学课程设计二-AES">
+<meta property="og:url" content="http://yoursite.com/2018/01/01/密码学课程设计二-AES/index.html">
+<meta property="og:site_name" content="leesinc1&#39;s blog">
+<meta property="og:description" content="说明基于CBC模式的一组明文的加密，对于文件加密的操作遇到点问题，加密之后的密文转成字符串以文本的形式输入文件会出现中文乱码，然后解密的时候只会解密出其中一部分，弄半天没有什么好的方法解决，原地爆炸（毕竟太菜），或许以后有时间会再来写吧。。。嘿嘿嘿 代码字符串异或123456789def str_xor(str1,str2):    ans = &amp;quot;&amp;quot;    for i in r">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-01-03T12:05:18.112Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="密码学课程设计二-AES">
+<meta name="twitter:description" content="说明基于CBC模式的一组明文的加密，对于文件加密的操作遇到点问题，加密之后的密文转成字符串以文本的形式输入文件会出现中文乱码，然后解密的时候只会解密出其中一部分，弄半天没有什么好的方法解决，原地爆炸（毕竟太菜），或许以后有时间会再来写吧。。。嘿嘿嘿 代码字符串异或123456789def str_xor(str1,str2):    ans = &amp;quot;&amp;quot;    for i in r">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/01/01/密码学课程设计二-AES/"/>
+
+
+
+
+
+  <title>密码学课程设计二-AES | leesinc1's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">leesinc1's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/01/01/密码学课程设计二-AES/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="leesinc1">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/uploads/leesinc1.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="leesinc1's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">密码学课程设计二-AES</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-01T15:02:47+08:00">
+                2018-01-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Crypto/" itemprop="url" rel="index">
+                    <span itemprop="name">Crypto</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/01/01/密码学课程设计二-AES/" class="leancloud_visitors" data-flag-title="密码学课程设计二-AES">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  1,941
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  12
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h2><p>基于CBC模式的一组明文的加密，对于文件加密的操作遇到点问题，加密之后的密文转成字符串以文本的形式输入文件会出现中文乱码，然后解密的时候只会解密出其中一部分，弄半天没有什么好的方法解决，原地爆炸（毕竟太菜），或许以后有时间会再来写吧。。。嘿嘿嘿</p>
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><h3 id="字符串异或"><a href="#字符串异或" class="headerlink" title="字符串异或"></a>字符串异或</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">def str_xor(str1,str2):</div><div class="line">    ans = &quot;&quot;</div><div class="line">    for i in range(0,len(str1)):</div><div class="line">        i_ans = int(str1[i])^int(str2[i])</div><div class="line">        if i_ans == 1:</div><div class="line">            ans += &apos;1&apos;</div><div class="line">        else:</div><div class="line">            ans += &apos;0&apos;</div><div class="line">    return ans</div></pre></td></tr></table></figure>
+<h3 id="字符串转字符"><a href="#字符串转字符" class="headerlink" title="字符串转字符"></a>字符串转字符</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">def str_to_bin(str):</div><div class="line">    bins = &quot;&quot;</div><div class="line">    for i in str:</div><div class="line">        i_bin = bin(ord(i))[2:]</div><div class="line">        for j in range(0,8-len(i_bin)):</div><div class="line">            i_bin = &apos;0&apos; + i_bin</div><div class="line">        bins += i_bin</div><div class="line">    return bins</div></pre></td></tr></table></figure>
+<h3 id="二进制转字符串"><a href="#二进制转字符串" class="headerlink" title="二进制转字符串"></a>二进制转字符串</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">def bin_to_str(str):</div><div class="line">    ans = &quot;&quot;</div><div class="line">    for i in range(0,len(str),8):</div><div class="line">        ans += chr(int(str[i:i+8],2))</div><div class="line">    return ans</div></pre></td></tr></table></figure>
+<h3 id="s盒"><a href="#s盒" class="headerlink" title="s盒"></a>s盒</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">def s_box(str):</div><div class="line">    s_list = [0x63,0x7c,0x77,0x7b,0xf2,0x6b,0x6f,0xc5,0x30,0x01,0x67,0x2b,0xfe,0xd7,0xab,0x76,</div><div class="line">              0xca,0x82,0xc9,0x7d,0xfa,0x59,0x47,0xf0,0xad,0xd4,0xa2,0xaf,0x9c,0xa4,0x72,0xc0,</div><div class="line">              0xb7,0xfd,0x93,0x26,0x36,0x3f,0xf7,0xcc,0x34,0xa5,0xe5,0xf1,0x71,0xd8,0x31,0x15,</div><div class="line">              0x04,0xc7,0x23,0xc3,0x18,0x96,0x05,0x9a,0x07,0x12,0x80,0xe2,0xeb,0x27,0xb2,0x75,</div><div class="line">              0x09,0x83,0x2c,0x1a,0x1b,0x6e,0x5a,0xa0,0x52,0x3b,0xd6,0xb3,0x29,0xe3,0x2f,0x84,</div><div class="line">              0x53,0xd1,0x00,0xed,0x20,0xfc,0xb1,0x5b,0x6a,0xcb,0xbe,0x39,0x4a,0x4c,0x58,0xcf,</div><div class="line">              0xd0,0xef,0xaa,0xfb,0x43,0x4d,0x33,0x85,0x45,0xf9,0x02,0x7f,0x50,0x3c,0x9f,0xa8,</div><div class="line">              0x51,0xa3,0x40,0x8f,0x92,0x9d,0x38,0xf5,0xbc,0xb6,0xda,0x21,0x10,0xff,0xf3,0xd2,</div><div class="line">              0xcd,0x0c,0x13,0xec,0x5f,0x97,0x44,0x17,0xc4,0xa7,0x7e,0x3d,0x64,0x5d,0x19,0x73,</div><div class="line">              0x60,0x81,0x4f,0xdc,0x22,0x2a,0x90,0x88,0x46,0xee,0xb8,0x14,0xde,0x5e,0x0b,0xdb,</div><div class="line">              0xe0,0x32,0x3a,0x0a,0x49,0x06,0x24,0x5c,0xc2,0xd3,0xac,0x62,0x91,0x95,0xe4,0x79,</div><div class="line">              0xe7,0xc8,0x37,0x6d,0x8d,0xd5,0x4e,0xa9,0x6c,0x56,0xf4,0xea,0x65,0x7a,0xae,0x08,</div><div class="line">              0xba,0x78,0x25,0x2e,0x1c,0xa6,0xb4,0xc6,0xe8,0xdd,0x74,0x1f,0x4b,0xbd,0x8b,0x8a,</div><div class="line">              0x70,0x3e,0xb5,0x66,0x48,0x03,0xf6,0x0e,0x61,0x35,0x57,0xb9,0x86,0xc1,0x1d,0x9e,</div><div class="line">              0xe1,0xf8,0x98,0x11,0x69,0xd9,0x8e,0x94,0x9b,0x1e,0x87,0xe9,0xce,0x55,0x28,0xdf,</div><div class="line">              0x8c,0xa1,0x89,0x0d,0xbf,0xe6,0x42,0x68,0x41,0x99,0x2d,0x0f,0xb0,0x54,0xbb,0x16]</div><div class="line">    ans = &quot;&quot;</div><div class="line">    for i in range(0,len(str),8):</div><div class="line">        str_i = str[i:i+8]</div><div class="line">        str_h = int(str_i[:4],2)</div><div class="line">        str_l = int(str_i[4:],2)</div><div class="line">        i_ans = bin(s_list[str_h*16+str_l])[2:]</div><div class="line">        for j in range(0,8-len(i_ans)):</div><div class="line">            i_ans = &apos;0&apos; + i_ans</div><div class="line">        ans += i_ans</div><div class="line">    return ans</div></pre></td></tr></table></figure>
+<h3 id="逆s盒"><a href="#逆s盒" class="headerlink" title="逆s盒"></a>逆s盒</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">def re_s_box(str):</div><div class="line">    re_s_list = [0x52,0x09,0x6a,0xd5,0x30,0x36,0xa5,0x38,0xbf,0x40,0xa3,0x9e,0x81,0xf3,0xd7,0xfb,</div><div class="line">                 0x7c,0xe3,0x39,0x82,0x9b,0x2f,0xff,0x87,0x34,0x8e,0x43,0x44,0xc4,0xde,0xe9,0xcb,</div><div class="line">                 0x54,0x7b,0x94,0x32,0xa6,0xc2,0x23,0x3d,0xee,0x4c,0x95,0x0b,0x42,0xfa,0xc3,0x4e,</div><div class="line">                 0x08,0x2e,0xa1,0x66,0x28,0xd9,0x24,0xb2,0x76,0x5b,0xa2,0x49,0x6d,0x8b,0xd1,0x25,</div><div class="line">                 0x72,0xf8,0xf6,0x64,0x86,0x68,0x98,0x16,0xd4,0xa4,0x5c,0xcc,0x5d,0x65,0xb6,0x92,</div><div class="line">                 0x6c,0x70,0x48,0x50,0xfd,0xed,0xb9,0xda,0x5e,0x15,0x46,0x57,0xa7,0x8d,0x9d,0x84,</div><div class="line">                 0x90,0xd8,0xab,0x00,0x8c,0xbc,0xd3,0x0a,0xf7,0xe4,0x58,0x05,0xb8,0xb3,0x45,0x06,</div><div class="line">                 0xd0,0x2c,0x1e,0x8f,0xca,0x3f,0x0f,0x02,0xc1,0xaf,0xbd,0x03,0x01,0x13,0x8a,0x6b,</div><div class="line">                 0x3a,0x91,0x11,0x41,0x4f,0x67,0xdc,0xea,0x97,0xf2,0xcf,0xce,0xf0,0xb4,0xe6,0x73,</div><div class="line">                 0x96,0xac,0x74,0x22,0xe7,0xad,0x35,0x85,0xe2,0xf9,0x37,0xe8,0x1c,0x75,0xdf,0x6e,</div><div class="line">                 0x47,0xf1,0x1a,0x71,0x1d,0x29,0xc5,0x89,0x6f,0xb7,0x62,0x0e,0xaa,0x18,0xbe,0x1b,</div><div class="line">                 0xfc,0x56,0x3e,0x4b,0xc6,0xd2,0x79,0x20,0x9a,0xdb,0xc0,0xfe,0x78,0xcd,0x5a,0xf4,</div><div class="line">                 0x1f,0xdd,0xa8,0x33,0x88,0x07,0xc7,0x31,0xb1,0x12,0x10,0x59,0x27,0x80,0xec,0x5f,</div><div class="line">                 0x60,0x51,0x7f,0xa9,0x19,0xb5,0x4a,0x0d,0x2d,0xe5,0x7a,0x9f,0x93,0xc9,0x9c,0xef,</div><div class="line">                 0xa0,0xe0,0x3b,0x4d,0xae,0x2a,0xf5,0xb0,0xc8,0xeb,0xbb,0x3c,0x83,0x53,0x99,0x61,</div><div class="line">                 0x17,0x2b,0x04,0x7e,0xba,0x77,0xd6,0x26,0xe1,0x69,0x14,0x63,0x55,0x21,0x0c,0x7d,]</div><div class="line">    ans = &quot;&quot;</div><div class="line">    for i in range(0,len(str),8):</div><div class="line">        str_i = str[i:i+8]</div><div class="line">        str_h = int(str_i[:4],2)</div><div class="line">        str_l = int(str_i[4:],2)</div><div class="line">        i_ans = bin(re_s_list[str_h*16+str_l])[2:]</div><div class="line">        for j in range(0,8-len(i_ans)):</div><div class="line">            i_ans = &apos;0&apos; + i_ans</div><div class="line">        ans += i_ans</div><div class="line">    return ans</div></pre></td></tr></table></figure>
+<h3 id="行移位"><a href="#行移位" class="headerlink" title="行移位"></a>行移位</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">def hmove(str):</div><div class="line">    ans = &quot;&quot;</div><div class="line">    for i in range(0,4):</div><div class="line">        i_ans = str[i*32:i*32+32]</div><div class="line">        i_ans = i_ans[i*8:]+i_ans[0:i*8]</div><div class="line">        ans += i_ans</div><div class="line">    return ans</div></pre></td></tr></table></figure>
+<h3 id="逆行移位"><a href="#逆行移位" class="headerlink" title="逆行移位"></a>逆行移位</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">def re_hmove(str):</div><div class="line">    ans = &quot;&quot;</div><div class="line">    for i in range(0,4):</div><div class="line">        i_ans = str[i*32:i*32+32]</div><div class="line">        i_ans = i_ans[32-i*8:] + i_ans[:32-i*8]</div><div class="line">        ans += i_ans</div><div class="line">    return ans</div></pre></td></tr></table></figure>
+<h3 id="GF有限域"><a href="#GF有限域" class="headerlink" title="GF有限域"></a>GF有限域</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line">def G1(str):</div><div class="line">    return str</div><div class="line"></div><div class="line">def G2(str):</div><div class="line">    ans = str[1:] + &apos;0&apos;</div><div class="line">    if str[0] == &apos;1&apos;:</div><div class="line">        ans = str_xor(ans,&quot;00011011&quot;)</div><div class="line">    return ans</div><div class="line"></div><div class="line">def G3(str):</div><div class="line">    ans = G2(str)</div><div class="line">    ans = str_xor(ans,str)</div><div class="line">    return ans</div><div class="line"></div><div class="line">def G4(str):</div><div class="line">    ans = G2(str)</div><div class="line">    return G2(ans)</div><div class="line"></div><div class="line">def G8(str):</div><div class="line">    ans = G4(str)</div><div class="line">    return G2(ans)</div><div class="line"></div><div class="line">def GF(str1,str2):</div><div class="line">    if str2 == &quot;01&quot;:</div><div class="line">        ans = G1(str1)</div><div class="line">    elif str2 == &quot;02&quot;:</div><div class="line">        ans = G2(str1)</div><div class="line">    elif str2 == &quot;03&quot;:</div><div class="line">        ans = G3(str1)</div><div class="line">    elif str2 == &quot;09&quot;:</div><div class="line">        ans = str_xor(G8(str1),str1)</div><div class="line">    elif str2 == &quot;0B&quot;:</div><div class="line">        ans1 = str_xor(G8(str1),G2(str1))</div><div class="line">        ans = str_xor(ans1,str1)</div><div class="line">    elif str2 == &quot;0D&quot;:</div><div class="line">        ans1 = str_xor(G8(str1),G4(str1))</div><div class="line">        ans = str_xor(ans1,str1)</div><div class="line">    else:</div><div class="line">        ans1 = str_xor(G8(str1),G4(str1))</div><div class="line">        ans = str_xor(ans1,G2(str1))</div><div class="line">    return ans</div></pre></td></tr></table></figure>
+<h3 id="列混淆"><a href="#列混淆" class="headerlink" title="列混淆"></a>列混淆</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">def list_en(str):</div><div class="line">    no_list = [&quot;02&quot;, &quot;03&quot;, &quot;01&quot;, &quot;01&quot;,</div><div class="line">               &quot;01&quot;, &quot;02&quot;, &quot;03&quot;, &quot;01&quot;,</div><div class="line">               &quot;01&quot;, &quot;01&quot;, &quot;02&quot;, &quot;03&quot;,</div><div class="line">               &quot;03&quot;, &quot;01&quot;, &quot;01&quot;, &quot;02&quot;]</div><div class="line">    ans = &quot;&quot;</div><div class="line">    for i in range(0,4):</div><div class="line">        for j in range(0,4):</div><div class="line">            str_l = str[j*8:j*8+8] + str[j*8+32:j*8+40] + str[j*8+64:j*8+72] + str[j*8+96:j*8+104]</div><div class="line">            no_h = no_list[i*4] + no_list[i*4+1] + no_list[i*4+2] + no_list[i*4+3]</div><div class="line">            ans += mat_ride(str_l,no_h)</div><div class="line">    return ans</div><div class="line"></div><div class="line">def mat_ride(str1,str2):</div><div class="line">    ans = &quot;00000000&quot;</div><div class="line">    j = 0</div><div class="line">    for i in range(0,len(str2),2):</div><div class="line">        str3 = str1[j*8:j*8+8]</div><div class="line">        sum_ans = GF(str3,str2[i:i+2])</div><div class="line">        ans = str_xor(ans,sum_ans)</div><div class="line">        j += 1</div><div class="line">    return ans</div></pre></td></tr></table></figure>
+<h3 id="逆列混淆"><a href="#逆列混淆" class="headerlink" title="逆列混淆"></a>逆列混淆</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">def re_list_en(str):</div><div class="line">    re_list = [&quot;0E&quot;,&quot;0B&quot;,&quot;0D&quot;,&quot;09&quot;,</div><div class="line">               &quot;09&quot;,&quot;0E&quot;,&quot;0B&quot;,&quot;0D&quot;,</div><div class="line">               &quot;0D&quot;,&quot;09&quot;,&quot;0E&quot;,&quot;0B&quot;,</div><div class="line">               &quot;0B&quot;,&quot;0D&quot;,&quot;09&quot;,&quot;0E&quot;]</div><div class="line">    ans = &quot;&quot;</div><div class="line">    for i in range(0,4):</div><div class="line">        for j in range(0,4):</div><div class="line">            str_l = str[j*8:j*8+8] + str[j*8+32:j*8+40] + str[j*8+64:j*8+72] + str[j*8+96:j*8+104]</div><div class="line">            re_h = re_list[i*4] + re_list[i*4+1] + re_list[i*4+2] + re_list[i*4+3]</div><div class="line">            ans += re_mat_ride(str_l,re_h)</div><div class="line">    return ans</div><div class="line"></div><div class="line">def re_mat_ride(str1,str2):</div><div class="line">    ans = &quot;00000000&quot;</div><div class="line">    j = 0</div><div class="line">    for i in range(0,len(str2),2):</div><div class="line">        str3 = str1[j*8:j*8+8]</div><div class="line">        sum_ans = GF(str3,str2[i:i+2])</div><div class="line">        ans = str_xor(ans,sum_ans)</div><div class="line">        j += 1</div><div class="line">    return ans</div></pre></td></tr></table></figure>
+<h3 id="密钥拓展"><a href="#密钥拓展" class="headerlink" title="密钥拓展"></a>密钥拓展</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">def key_Expand(str):</div><div class="line">    k_list = []</div><div class="line">    for i in range(0,len(str)/4):</div><div class="line">        key_i = str[i*4:i*4+4]</div><div class="line">        key_i = str_to_bin(key_i)</div><div class="line">        k_list.append(key_i)</div><div class="line">    for i in range(1,11):</div><div class="line">        key_i = str_xor(FuncT(k_list[i*4-1],i),k_list[i*4-4])</div><div class="line">        k_list.append(key_i)</div><div class="line">        key_i = str_xor(key_i,k_list[i*4-3])</div><div class="line">        k_list.append(key_i)</div><div class="line">        key_i = str_xor(key_i,k_list[i*4-2])</div><div class="line">        k_list.append(key_i)</div><div class="line">        key_i = str_xor(key_i,k_list[i*4-1])</div><div class="line">        k_list.append(key_i)</div><div class="line">    return k_list</div></pre></td></tr></table></figure>
+<h3 id="T函数"><a href="#T函数" class="headerlink" title="T函数"></a>T函数</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">def FuncT(str,i):</div><div class="line">    ans = str[8:] + str[:8]</div><div class="line">    ans = s_box(ans)</div><div class="line">    Rcon_list = [&quot;00000001000000000000000000000000&quot;,</div><div class="line">                 &quot;00000010000000000000000000000000&quot;,</div><div class="line">                 &quot;00000100000000000000000000000000&quot;,</div><div class="line">                 &quot;00001000000000000000000000000000&quot;,</div><div class="line">                 &quot;00010000000000000000000000000000&quot;,</div><div class="line">                 &quot;00100000000000000000000000000000&quot;,</div><div class="line">                 &quot;01000000000000000000000000000000&quot;,</div><div class="line">                 &quot;10000000000000000000000000000000&quot;,</div><div class="line">                 &quot;00011011000000000000000000000000&quot;,</div><div class="line">                 &quot;00110110000000000000000000000000&quot;]</div><div class="line">    return str_xor(ans,Rcon_list[i-1])</div></pre></td></tr></table></figure>
+<h3 id="iv生成器"><a href="#iv生成器" class="headerlink" title="iv生成器"></a>iv生成器</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">def rand_iv():</div><div class="line">    iv = &quot;&quot;</div><div class="line">    range_iv = &quot;ZBCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789&quot;</div><div class="line">    for i in range(0,16):</div><div class="line">        iv += range_iv[random.randint(0,61)]</div><div class="line">    return iv</div></pre></td></tr></table></figure>
+<h3 id="单组AES-CBC加密"><a href="#单组AES-CBC加密" class="headerlink" title="单组AES-CBC加密"></a>单组AES-CBC加密</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">def AES_CBC_encode(str,key,str_iv):</div><div class="line">    key_list = key</div><div class="line">    for i in range(0,16-len(str)):</div><div class="line">        str = str + &apos;0&apos;</div><div class="line">    iv_bin = str_iv</div><div class="line">    mw_str_bin =str_to_bin(str)</div><div class="line">    code_m = str_xor(iv_bin,mw_str_bin)</div><div class="line">    code = &quot;&quot;</div><div class="line">    key_i = &quot;&quot;</div><div class="line">    for i in range(0,4):</div><div class="line">        code = code + code_m[i*8:i*8+8] + code_m[i*8+32:i*8+40] + code_m[i*8+64:i*8+72] + code_m[i*8+96:i*8+104]</div><div class="line">        key_i = key_i + key_list[0][i*8:i*8+8] + key_list[1][i*8:i*8+8] + key_list[2][i*8:i*8+8] + key_list[3][i*8:i*8+8]</div><div class="line">    codem = str_xor(key_i,code)</div><div class="line">    for i in range(1,10):</div><div class="line">        codem = s_box(codem)</div><div class="line">        codem = hmove(codem)</div><div class="line">        codem = list_en(codem)</div><div class="line">        key_i = &quot;&quot;</div><div class="line">        for j in range(0,4):</div><div class="line">            key_i = key_i + key_list[i*4][j*8:j*8+8] + key_list[i*4+1][j*8:j*8+8] + key_list[i*4+2][j*8:j*8+8] + key_list[i*4+3][j*8:j*8+8]</div><div class="line">        codem = str_xor(codem,key_i)</div><div class="line">    codem = s_box(codem)</div><div class="line">    codem = hmove(codem)</div><div class="line">    key_i = &quot;&quot;</div><div class="line">    for j in range(0,4):</div><div class="line">        key_i = key_i + key_list[40][j*8:j*8+8] + key_list[41][j*8:j*8+8] + key_list[42][j*8:j*8+8] + key_list[43][j*8:j*8+8]</div><div class="line">    codem = str_xor(codem,key_i)</div><div class="line">    code = &quot;&quot;</div><div class="line">    for i in range(0,4):</div><div class="line">        code = code + codem[i*8:i*8+8] + codem[i*8+32:i*8+40] + codem[i*8+64:i*8+72] + codem[i*8+96:i*8+104]</div><div class="line">    code = bin_to_str(code)</div><div class="line">    return code</div></pre></td></tr></table></figure>
+<h3 id="单组AES-CBC解密"><a href="#单组AES-CBC解密" class="headerlink" title="单组AES-CBC解密"></a>单组AES-CBC解密</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">def AES_CBC_decode(str,iv_bin,key):</div><div class="line">    key_list = key</div><div class="line">    codem = str_to_bin(str)</div><div class="line">    code = &quot;&quot;</div><div class="line">    key_i = &quot;&quot;</div><div class="line">    for i in range(0,4):</div><div class="line">        code = code + codem[i*8:i*8+8] + codem[i*8+32:i*8+40] + codem[i*8+64:i*8+72] + codem[i*8+96:i*8+104]</div><div class="line">        key_i = key_i + key_list[40][i*8:i*8+8] + key_list[41][i*8:i*8+8] + key_list[42][i*8:i*8+8] + key_list[43][i*8:i*8+8]</div><div class="line">    code = str_xor(key_i,code)</div><div class="line">    for i in range(1,10):</div><div class="line">        key_i = &quot;&quot;</div><div class="line">        for j in range(0,4):</div><div class="line">            key_i = key_i + key_list[(10-i)*4][j*8:j*8+8] + key_list[(10-i)*4+1][j*8:j*8+8] + key_list[(10-i)*4+2][j*8:j*8+8] + key_list[(10-i)*4+3][j*8:j*8+8]</div><div class="line">        code = re_hmove(code)</div><div class="line">        code = re_s_box(code)</div><div class="line">        code = str_xor(key_i,code)</div><div class="line">        code = re_list_en(code)</div><div class="line">    code = re_hmove(code)</div><div class="line">    code = re_s_box(code)</div><div class="line">    key_i = &quot;&quot;</div><div class="line">    for i in range(0,4):</div><div class="line">        key_i = key_i + key_list[0][i*8:i*8+8] + key_list[1][i*8:i*8+8] + key_list[2][i*8:i*8+8] + key_list[3][i*8:i*8+8]</div><div class="line">    code = str_xor(key_i,code)</div><div class="line">    code_m = &quot;&quot;</div><div class="line">    for i in range(0,4):</div><div class="line">        code_m = code_m + code[i*8:i*8+8] + code[i*8+32:i*8+40] + code[i*8+64:i*8+72] + code[i*8+96:i*8+104]</div><div class="line">    code = str_xor(code_m,iv_bin)</div><div class="line">    code = bin_to_str(code)</div><div class="line">    return code</div></pre></td></tr></table></figure>
+<h2 id="结尾"><a href="#结尾" class="headerlink" title="结尾"></a>结尾</h2><p>写的太乱了，全程以二进制形式跑，也不知道效率怎么样。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/密码学课程设计/" rel="tag"><i class="fa fa-tag"></i> 密码学课程设计</a>
+          
+            <a href="/tags/AES-CBC/" rel="tag"><i class="fa fa-tag"></i> AES_CBC</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/12/26/密码学课程设计二-DES密码/" rel="next" title="密码学课程设计二-DES密码">
+                <i class="fa fa-chevron-left"></i> 密码学课程设计二-DES密码
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/uploads/leesinc1.jpg"
+                alt="leesinc1" />
+            
+              <p class="site-author-name" itemprop="name">leesinc1</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/leesinc1" target="_blank" title="GitHub">
+                    
+                      <i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="http://weibo.com/5785393846/profile?rightmod=1&wvr=6&mod=personinfo" target="_blank" title="Sina">
+                    
+                      <i class="fa fa-fw fa-sina"></i>Sina</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://oj.xctf.org.cn/web/login/?next=/" title="XCTF" target="_blank">XCTF</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.shiyanbar.com/ctf/practice/" title="实验吧" target="_blank">实验吧</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://orzk.github.io/" title="Orzk" target="_blank">Orzk</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#说明"><span class="nav-number">1.</span> <span class="nav-text">说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#代码"><span class="nav-number">2.</span> <span class="nav-text">代码</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#字符串异或"><span class="nav-number">2.1.</span> <span class="nav-text">字符串异或</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#字符串转字符"><span class="nav-number">2.2.</span> <span class="nav-text">字符串转字符</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二进制转字符串"><span class="nav-number">2.3.</span> <span class="nav-text">二进制转字符串</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#s盒"><span class="nav-number">2.4.</span> <span class="nav-text">s盒</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#逆s盒"><span class="nav-number">2.5.</span> <span class="nav-text">逆s盒</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#行移位"><span class="nav-number">2.6.</span> <span class="nav-text">行移位</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#逆行移位"><span class="nav-number">2.7.</span> <span class="nav-text">逆行移位</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GF有限域"><span class="nav-number">2.8.</span> <span class="nav-text">GF有限域</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#列混淆"><span class="nav-number">2.9.</span> <span class="nav-text">列混淆</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#逆列混淆"><span class="nav-number">2.10.</span> <span class="nav-text">逆列混淆</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#密钥拓展"><span class="nav-number">2.11.</span> <span class="nav-text">密钥拓展</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#T函数"><span class="nav-number">2.12.</span> <span class="nav-text">T函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#iv生成器"><span class="nav-number">2.13.</span> <span class="nav-text">iv生成器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#单组AES-CBC加密"><span class="nav-number">2.14.</span> <span class="nav-text">单组AES-CBC加密</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#单组AES-CBC解密"><span class="nav-number">2.15.</span> <span class="nav-text">单组AES-CBC解密</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#结尾"><span class="nav-number">3.</span> <span class="nav-text">结尾</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">leesinc1</span>
+<!--
+   
+-->
+</div>
+<div class="powered-by">
+<span id="busuanzi_container_site_pv">
+    本站总访问量<span id="busuanzi_value_site_pv"></span>次
+</span>
+</div>
+<!--
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+-->
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">博客全站共7.7k字</span>
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("qkUq4Wh6OFO01jjgwqKgqdpy-gzGzoHsz", "EC8ipA5lRjhSYPTdGK2rYdGy");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -236,9 +236,9 @@
       <category term="Crypto" scheme="http://yoursite.com/categories/Crypto/"/>
     
     
-      <category term="cbc" scheme="http://yoursite.com/tags/cbc/"/>
-    
       <category term="Padding Oracle" scheme="http://yoursite.com/tags/Padding-Oracle/"/>
+    
+      <category term="cbc" scheme="http://yoursite.com/tags/cbc/"/>
     
   </entry>
   

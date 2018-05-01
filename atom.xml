@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2018-04-19T08:52:38.438Z</updated>
+  <updated>2018-05-01T05:02:14.054Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,20 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>既然选择了便要风雨兼程</title>
+    <link href="http://yoursite.com/2018/05/01/%E6%97%A2%E7%84%B6%E9%80%89%E6%8B%A9%E4%BA%86%E4%BE%BF%E8%A6%81%E9%A3%8E%E9%9B%A8%E5%85%BC%E7%A8%8B/"/>
+    <id>http://yoursite.com/2018/05/01/既然选择了便要风雨兼程/</id>
+    <published>2018-05-01T05:02:14.000Z</published>
+    <updated>2018-05-01T05:02:14.054Z</updated>
+    
+    <summary type="html">
+    
+    </summary>
+    
+    
+  </entry>
   
   <entry>
     <title>记XCTF-HITB一道题</title>

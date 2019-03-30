@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2019-03-28T13:22:17.515Z</updated>
+  <updated>2019-03-30T09:48:06.272Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,27 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>笔记</title>
+    <link href="http://yoursite.com/2019/03/30/%E7%AC%94%E8%AE%B0/"/>
+    <id>http://yoursite.com/2019/03/30/笔记/</id>
+    <published>2019-03-30T09:47:34.000Z</published>
+    <updated>2019-03-30T09:48:06.272Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="同源策略"><a href="#同源策略" class="headerlink" title="同源策略"></a>同源策略</h2><h3 id="同源"><a href="#同源" class="headerlink" title="同源"></a>同源</h3><p>URL由协议、域名、端口和路径组成，如果两个URL的协议、域名和端口相同，则表示他们同源。相反，只要协议，域名，端口有任何一个的不同，就被当作是跨域。</p><h3 id="同源策略-1"><a href="#同源策略-1" class="headerlink" title="同源策略"></a>同源策略</h3><p>浏览器采用同源策略，禁止页面加载或执行与自身来源不同的域的任何脚本。换句话说浏览器禁止的是来自不同源的”document”或脚本，对当前”document”读取或设置某些属性。</p><p>情景：<br>比如一个恶意网站的页面通过iframe嵌入了银行的登录页面（二者不同源），如果没有同源限制，恶意网页上的javascript脚本就可以在用户登录银行的时候获取用户名和密码。</p><p>浏览器中有哪些不受同源限制呢？<br>script、img、iframe、link 这些包含 src 属性的标签可以加载跨域资源。但浏览器限制了JavaScript的权限使其不能读、写加载的内容。</p><h2 id="SSRF"><a href="#SSRF" class="headerlink" title="SSRF"></a>SSRF</h2><p>服务端请求伪造，是一种由攻击者构造形成由服务端发起请求的一个安全漏洞。一般情况下，SSRF攻击的目标是从外网无法访问的内部系统。（正是因为它是由服务端发起的，所以它能够请求到与它相连而与外网隔离的内部系统）</p><p>SSRF 形成的原因大都是由于服务端提供了从其他服务器应用获取数据的功能且没有对目标地址做过滤与限制。比如从指定URL地址获取网页文本内容，加载指定地址的图片，下载等等。</p><p>例：www.xxx.com/a.php?image=<a href="http://www.abc.com/1.jpg。将http://www.abc.com/1.jpg换为与该服务器相连的内网服务器地址，如果存在该内网地址就会返回1xx，2xx之类的状态码，不存在就会其他的状态码。" target="_blank" rel="external">http://www.abc.com/1.jpg。将http://www.abc.com/1.jpg换为与该服务器相连的内网服务器地址，如果存在该内网地址就会返回1xx，2xx之类的状态码，不存在就会其他的状态码。</a></p><p>SSRF漏洞就是通过篡改获取资源的请求发送给服务器，但是服务器并没有发现在这个请求是合法的，然后服务器以他的身份来访问其他服务器的资源。</p><h3 id="常见位置"><a href="#常见位置" class="headerlink" title="常见位置"></a>常见位置</h3><p>1，分享  2，转码服务  3，在线翻译  4，图片加载与下载：通过URL地址加载或下载图 5，URL关键字（url,link,src等）等</p><h3 id="验证方法"><a href="#验证方法" class="headerlink" title="验证方法"></a>验证方法</h3><p>1）因为SSRF漏洞是构造服务器发送请求的安全漏洞，所以我们就可以通过抓包分析发送的请求是否是由服务器的发送的来判断是否存在SSRF漏洞</p><p>2）在页面源码中查找访问的资源地址 ，如果该资源地址类型为 <a href="http://www.xxx.com/a.php?image=地址的就可能存在SSRF漏洞" target="_blank" rel="external">http://www.xxx.com/a.php?image=地址的就可能存在SSRF漏洞</a></p><h3 id="防御方法"><a href="#防御方法" class="headerlink" title="防御方法"></a>防御方法</h3><p>1,过滤返回信息，验证远程服务器对请求的响应是比较容易的方法。如果web应用是去获取某一种类型的文件。那么在把返回结果展示给用户之前先验证返回的信息是否符合标准。<br>2, 统一错误信息，避免用户可以根据错误信息来判断远端服务器的端口状态。<br>3,限制请求的端口为http常用的端口，比如，80,443,8080,8090。<br>4,黑名单内网ip。避免应用被用来获取获取内网数据，攻击内网。<br>5,禁用不需要的协议。仅仅允许http和https请求。可以防止类似于file:///,gopher://,ftp:// 等引起的问题。</p><h2 id="CSRF"><a href="#CSRF" class="headerlink" title="CSRF"></a>CSRF</h2><h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><ol><li>用户C打开浏览器，访问受信任网站A，输入用户名和密码请求登录网站A；<br>2.在用户信息通过验证后，网站A产生Cookie信息并返回给浏览器，此时用户登录网站A成功，可以正常发送请求到网站A；</li><li>用户未退出网站A之前，在同一浏览器中，打开一个TAB页访问网站B；</li><li>网站B接收到用户请求后，返回一些攻击性代码，并发出一个请求要求访问第三方站点A； </li><li>浏览器在接收到这些攻击性代码后，根据网站B的请求，在用户不知情的情况下携带Cookie信息，向网站A发出请求。网站A并不知道该请求其实是由B发起的，所以会根据用户C的Cookie信息以C的权限处理该请求，导致来自网站B的恶意代码被执行。</li></ol><h3 id="检测"><a href="#检测" class="headerlink" title="检测"></a>检测</h3><p>最简单的方法就是抓取一个正常请求的数据包，去掉Referer字段后再重新提交，如果该提交还有效，那么基本上可以确定存在CSRF漏洞。</p><h3 id="防御"><a href="#防御" class="headerlink" title="防御"></a>防御</h3><p>验证 HTTP Referer 字段；在请求地址中添加 token 并验证；在 HTTP 头中自定义属性并验证。</p><h2 id="DOM型XSS"><a href="#DOM型XSS" class="headerlink" title="DOM型XSS"></a>DOM型XSS</h2><p>DOM型XSS其实是一种特殊类型的反射型XSS，它是基于DOM文档对象模型的一种漏洞。</p><p>在网站页面中有许多页面的元素，当页面到达浏览器时浏览器会为页面创建一个顶级的Document object文档对象，接着生成各个子文档对象，每个页面元素对应一个文档对象，每个文档对象包含属性、方法和事件。可以通过JS脚本对文档对象进行编辑从而修改页面的元素。也就是说，客户端的脚本程序可以通过DOM来动态修改页面内容，从客户端获取DOM中的数据并在本地执行。基于这个特性，就可以利用JS脚本来实现XSS漏洞的利用。</p><p>可能触发DOM型XSS的属性：document.referer属性,window.name属性,location属性,innerHTML属性,documen.write属性</p><p>与反射型XSS、存储型XSS的区别就在于xss代码并不需要服务器解析响应的直接参与，触发XSS靠的是浏览器端的DOM解析。</p><h2 id="变量覆盖"><a href="#变量覆盖" class="headerlink" title="变量覆盖"></a>变量覆盖</h2><p>$$，extract()函数，parse_str()函数，import_request_variables()使用不当，开启了全局变量注册等</p><h2 id="代码审计思路"><a href="#代码审计思路" class="headerlink" title="代码审计思路"></a>代码审计思路</h2><p>1.根据敏感关键字回溯参数传递过程；<br>2.查找可控变量，正向追踪变量传递过程；<br>3.寻找敏感功能点，通读功能点代码；<br>4.直接通读全文代码。</p><h2 id="HTTPS原理"><a href="#HTTPS原理" class="headerlink" title="HTTPS原理"></a>HTTPS原理</h2><p><a href="https://blog.csdn.net/kobejayandy/article/details/52433660" target="_blank" rel="external">HTTPS详解</a></p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h2 id=&quot;同源策略&quot;&gt;&lt;a href=&quot;#同源策略&quot; class=&quot;headerlink&quot; title=&quot;同源策略&quot;&gt;&lt;/a&gt;同源策略&lt;/h2&gt;&lt;h3 id=&quot;同源&quot;&gt;&lt;a href=&quot;#同源&quot; class=&quot;headerlink&quot; title=&quot;同源&quot;&gt;&lt;/a&gt;同源&lt;/h
+      
+    
+    </summary>
+    
+    
+  </entry>
   
   <entry>
     <title>OWASP_TOP10</title>

